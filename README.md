@@ -1,4 +1,6 @@
-# Trabajo4
+# ANÁLISIS DE LA ABUNDANCIA RELATIVA DE DINUCLEÓTIDOS EN CEPAS PATÓGENAS Y NO PATÓGENAS DEL GÉNERO Pseudomonas.
+
+
 
 # CONSIDERACIONES GENERALES
 
@@ -15,8 +17,7 @@ conservara la misma longitud del genoma de las bacterias escogidas. A continuaci
 # ABUNDANCIA RELATIVA DE DINUCLEÓTIDOS
 
 La abundancia relativa de dinucleótidos es frecuentemente utilizada para realizar comparaciones entre genomas de diferentes organismos y entre diferentes especies 
-bacterianas (Srividhya et al., 2007), esta métrica es altamente conservada entre oraganismos de la misma especie. Por esta razón,  se espera que la RDA permita establecer diferencias 
-entre dos especies de Pseudomonas, una patógena (Pseudomonas aeruginosa) y otra no patógena (Pseudomonas putida). Con el fin de garantizar que esta métrica si permite visualizar estas diferencias, también 
+bacterianas (Srividhya et al., 2007), esta métrica es altamente conservada entre oraganismos de la misma especie. Por esta razón,  se espera que la RDA permita establecer diferencias entre dos especies de Pseudomonas, una patógena (Pseudomonas aeruginosa) y otra no patógena (Pseudomonas putida). Con el fin de garantizar que esta métrica si permite visualizar estas diferencias, también 
 fueron realizados los análisis con una secuencia de la misma longitud generada de manera aleatoria.
 
 Para calcular la abundancia relativa se utiliza la siguiente ecuación:
@@ -39,11 +40,27 @@ para cada una de las secuencias analizadas.
 Con esta rutina se espera determinar si existen diferencias significativas entre la abundancia relativa de los dinucleótidos de la cepa patógena y la 
 no patógena.
 
+
+# Paquetes requeridos
+
+Para el funcionamiento de esta rutina será necesario la instalación de los siguientes paquetes.
+
+		import os
+		import sys
+		import pandas as pd
+		import matplotlib.pyplot as plt
+		import seaborn as sns
+		import dinuq as dn # This package provides a range of metrics for quantifying dinucleotide in genetic sequences. (pip install dinuq)
+		from scipy.stats import f_oneway
+		import random
+		import scipy.stats as stats
+		from scipy.stats import tukey_hsd
+		from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+
 # Generación de la secuencia aleatoria
 
-Con el fin de determinar si esta métrica permitía detectar diferencias entre secuencias diferentes, se creó una secuencia aleatoria con el paquete random.
-La función de esta secuencia es actuar como control negativo, en los análisis que se realizarán, permitiendo observar si existen o no patrones en los perfiles
-generados por los valores de RDA para las secuencias de los genomas bacterianos.
+Con el fin de determinar si esta métrica permitía detectar diferencias entre secuencias diferentes y los dinucleótidos que generaban dichas diferencias, se creó una secuencia aleatoria con el paquete random. La función de esta secuencia es actuar como control negativo en los análisis que se realizarán, permitiendo observar si existen o no patrones conservadps en los perfiles generados por los valores de RDA para las secuencias de los genomas bacterianos.
 
 
 # Cálculo de los RDA
@@ -188,17 +205,26 @@ Finalmente, se realiza la edición de la tabla para crear las categorías y pode
 
 # Elaboración de gráficos
 
-Con los resultados obtenidos se procede a elaborar diferentes gráficos utilizando el paquete seaborn de python
-
-<img width="583" alt="image" src="https://user-images.githubusercontent.com/116923271/202967908-2aa192af-8830-4508-b708-de00c0aa9a25.png">
-
-En este gráfico pueden observarse diferencias entre los perfiles de RDA de la secuencia patógena y la secuencia no patógena, lo cual permite evidenciar
+Con los resultados obtenidos se procede a elaborar seis gráficos diferentes, barplot, relplot, scatteplot, boxplot, y lineplot,  utilizando el paquete seaborn de python (Fig.1). De los gráficos generados, el que mejor ilustra los valores extremos en los valores RDA correspondiente a los tres organismos, es el lineplot (Fig.2). En este se evidencian claramente las diferencias entre los perfiles de RDA de la secuencia patógena y la secuencia no patógena. Estas diferenncias son generadas principalmente por la abundancia relativa de los dinucleótidos AT, CA, CG, TG y TC, como se observa en la fig 2. 
 que esta métrica resulta es adecuada para evidenciar cambios en los genomas bacterianos.
+
+  # Figura 1: 
+  Gráficos para ilustrar la abundancia relativa en los dinucleótidos de bacterias patógenas (Pseudomonas aeruginosa) y no patógenas (Pseudomonas putida).
+  
+<img width="978" alt="image" src="https://user-images.githubusercontent.com/116923271/203669386-8aebb2cd-18bc-4041-ac09-cfa878672a65.png">
+
+
+  # Figura 2:  
+  Lineplot de la abundancia relativa en los dinucleótidos de bacterias patógenas (Pseudomonas aeruginosa) y no patógenas (Pseudomonas putida).
+  
+<img width="559" alt="image" src="https://user-images.githubusercontent.com/116923271/203671365-48d3da74-374f-4446-acb9-b5506a1d2607.png">
+
+
 
 
 # Análisis estadístico
 
-El análisis estadístico se realizó con un alfa = 0.05 y bajos las siguientes hipotesis
+El análisis estadístico se realizó considerando un alfa = 0.05 y bajo el siguiente juego de hipotesis.
 
 Ho:Las medias entre los RDAs son iguales, no hay diferencia significativa
 Ha:Las medias entre los RDAs son diferentes, hay diferencia significativa
@@ -207,7 +233,7 @@ Dada estas hipotesis se evaluará lo siguiente, si el valor p es mayor a 0.05 no
 que no hay diferencias significativas, por otro lado, si el valor p es menor o igual a 0.05 es posible rechazar Ho y puede concluirse que hay diferencias 
 significativas.
 
-# ANOVA
+# ANÁLISIS DE LA VARIANZA - ANOVA
 El anova se realizó utilizando la herramieta stats del paquete scipy.stats, empleando el siguiente comando.
 
 		fvalue, pvalue = stats.f_oneway(df_conc_2['NC_002516.2'], df_conc_2['NC_021505.1'], df_conc_2['random'])
@@ -217,11 +243,30 @@ Obteniendo el siguiente resultado
 
 <img width="342" alt="image" src="https://user-images.githubusercontent.com/116923271/202966424-dfea50e0-b49d-4442-915b-c431403d7453.png">
 
-Dado que el valor p fue igual a 0.9999 y es mayor a 0.05, se concluye que no se cuenta con evidencia para rechazar la Ho, indicando que las medias son diferentes,
-y por lo tando hay diferencias entre los RDAs de los organismos analizados. Sin embargo, para este tipo de análisis, y en especial para la comparación de RDAs entre 
-organismos, el análisis recomendado es el Least Difference significance (LDS) (Wang et al.,2022), pero al revisar en la literatura, no se encontraron rutinas o paquetes que
-permitieran realizarlo y hasta el momento solo puede calcularse usando R studio, por esta razón se eligió el ANOVA, método que no tiene el poder para analizar
-el tipo de datos generados en este código.
+Dado que el valor p fue igual a 0.9999 y es mayor a 0.05, se concluye que no se cuenta con evidencia para rechazar la hipotesis nula, indicando que las medias son iguales, y por tanto no hay diferencias significativas entre los RDAs de los organismos analizados. Sin embargo, en los gráficos se evidenció que hay diferencias entre los perfiles de RDA de las secuencias, esta incongruencia, se debe principalmente a que el ANOVA no tiene el poder para detectar 
+las diferencias presentes en este tipo de análisis, en los cuales, es recomendado realizar el análisis estadístico Least significant Difference (LSD) (Wang et al.,2022), sin embargo, al realizar busqueda en diferentes páginas de programación y en espacios de discusión de python, no se encontraron paquetes que permitieran realizarlo en python y hasta el momento solo puede calcularse usando R studio. Por esta razón y con el objetivo de poder observar las diferencias entre los pares de secuencias analizadas se llevo a cabo el test Tukey HSD (Honestly-significant-difference) disponible en el paquete scipy.stats. Este test permite hacer comparaciones multiples al analizar las diferencias en pareja entre las medias, permitiendo una mayor resolución en el análisis de los valores de RDA entre pares de secuencias. Para realizar este análisis se corrió en puthon lo siguiente,
+
+# Test HSD (Honestly-significant-difference) de Tukey.
+			print(f'Tukey_HSD')
+			Tukey_HSD = tukey_hsd(df_conc_2['NC_002516.2'], df_conc_2['NC_021505.1'], df_conc_2['random'])
+
+			print(Tukey_HSD)
+
+Obteniendo el siguiente resultado,
+
+  <img width="537" alt="image" src="https://user-images.githubusercontent.com/116923271/203675645-2c929bdf-cc1b-4450-9656-ed27340dd6ef.png">
+
+
+Para analizar el anterior resultado se debe tener presente que:
+
+0 = NC_002516.2 (Pathogen)
+1 = NC_021505.1 (No pathogen)
+2 = random  (Random_seq)
+
+Los datos obtenidos en el Tukeys'HSD, confirman que no existen diferencias significativas entre las medias de los RDAs entre las bacterias analizadas, por tal motivo, y considerando que estos resultados no coinciden con lo observado en las gráficas se sugiere realizar el least significant differences, que permita detectar las diferencias, entre el organismo patógeno y no patógeno, en la abundadncia relativa de dinucleótidos AT, CA, CG, CT, TG y TC. También, se sugiere realizar este análisis con un mayor número de genomas bacterianos y comparando las diferencias entre cada uno de los dinucleótidos que presentaron valores extremos en este estudio.
+
+
+
 
 # BIBLIOGRAFÍA
 
